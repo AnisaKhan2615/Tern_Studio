@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tern Studio – Interactive Product Configurator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <span class="brand">Tern Studio</span>
+    <nav class="header-nav" aria-label="Sections"><a href="#customize">Customize</a><a href="#videoSection">Video</a><a href="#premiumSection">Premium</a></nav>
+    <span class="status-badge" id="statusBadge" aria-live="polite">Free User</span>
+    <span class="cart-badge" id="cartBadge" aria-live="polite">Cart: 0</span>
+  </div>
+  <div class="scroll-progress" id="scrollProgress"></div>
+</header>
+
+
+
+<main class="page">
+  <nav class="product-tabs" id="productTabs" aria-label="Choose a product">
+    <button type="button" class="tab is-active" data-product="flask" aria-pressed="true">Insulated Flask</button>
+    <button type="button" class="tab" data-product="mug" aria-pressed="false">Ceramic Mug</button>
+    <button type="button" class="tab" data-product="notebook" aria-pressed="false">Linen Notebook</button>
+  </nav>
+
+  <div class="layout" id="customize">
+    <!-- Left: preview and cart -->
+    <div class="stage-column">
+      <article class="product-card" id="productCard" draggable="true" aria-label="Product preview. Drag into the cart.">
+        <svg class="premium-badge" id="premiumBadgeSvg" viewBox="0 0 64 64" role="img" aria-label="Premium badge" hidden>
+          <circle class="badge-ring" cx="32" cy="32" r="29"/><polygon class="badge-star" points="32,10 38,26 55,26 41,36 46,53 32,43 18,53 23,36 9,26 26,26"/>
+        </svg>
+        <div class="preview-stage" id="previewStage"></div>
+        <div class="card-footer">
+          <span class="state-chip" id="stateChip">Move over the product</span>
+          <button type="button" class="btn btn-ghost btn-small" id="addToCartButton">Add to cart</button>
+        </div>
+        <p class="hint">Drag this card into the cart below, or use the button.</p>
+      </article>
+
+      <section class="cart-zone" id="cartZone" aria-label="Cart drop area">
+        <h2><span>Your cart</span><span id="cartCount">0 items</span></h2>
+        <p class="cart-empty" id="cartEmpty">Drop the product here to add it.</p>
+        <ul class="cart-list" id="cartList"></ul>
+        <div class="cart-total"><span>Total</span><span id="cartTotal">$0.00</span></div>
+      </section>
+    </div>
+
+    <!-- Right: details and form -->
+    <div class="form-column">
+      <section class="panel">
+        <h2 id="productTitle">Insulated Flask</h2>
+        <div class="price-line"><span class="price" id="priceDisplay">$42.00</span><span class="hint">engraving included</span></div>
+        <p class="description" id="productDescription"></p>
+      </section>
+
+      <form class="panel" id="configForm" novalidate>
+        <h2>Customize</h2>
+
+        <fieldset>
+          <legend>Finish</legend>
+          <div class="swatches" id="variantGroup"></div>
+        </fieldset>
+
+        <div>
+          <label class="field-label" for="sizeSelect">Size</label>
+          <select class="input" id="sizeSelect" name="size"></select>
+        </div>
+
+        <div class="field" id="engravingField">
+          <label class="field-label" for="engravingInput">Engraving</label>
+          <input class="input" id="engravingInput" name="engraving" type="text" maxlength="18" autocomplete="off" placeholder="e.g. Amina's" aria-describedby="engravingMeta">
+          <div class="field-meta" id="engravingMeta">
+            <span class="error-text" id="engravingError" role="alert"></span>
+            <span class="counter" id="engravingCounter">0 / 18</span>
+          </div>
+        </div>
+
+        <div class="field" id="nameField">
+          <label class="field-label" for="customerName">Full name</label>
+          <input class="input" id="customerName" name="customerName" type="text" autocomplete="name" placeholder="Your name">
+          <div class="field-meta"><span class="error-text" id="nameError" role="alert"></span></div>
+        </div>
+
+        <div class="field" id="emailField">
+          <label class="field-label" for="customerEmail">Email</label>
+          <input class="input" id="customerEmail" name="customerEmail" type="email" autocomplete="email" placeholder="you@example.com">
+          <div class="field-meta"><span class="error-text" id="emailError" role="alert"></span></div>
+        </div>
+
+        <div class="button-row">
+          <button type="submit" class="btn btn-primary">Place order</button>
+          <button type="reset" class="btn btn-ghost">Reset</button>
+        </div>
+      </form>
+
+      <section class="panel premium-panel" id="premiumOptions" aria-label="Premium customization">
+        <h2>Premium customization <span class="plan-chip" id="premiumChip">🔒 Locked</span></h2>
+        <p class="hint">Free options are always available. Options marked 🔒 need Premium.</p>
+        <fieldset><legend>Engraving foil</legend><div class="swatches">
+          <label class="swatch"><input type="radio" name="foil" value="standard" checked><span><i class="dot-standard"></i>Standard <b class="free-tag">Free</b></span></label>
+          <label class="swatch" data-premium><input type="radio" name="foil" value="gold"><span><i class="dot-gold"></i>Gold <b class="lock-tag">🔒</b></span></label>
+          <label class="swatch" data-premium><input type="radio" name="foil" value="rose"><span><i class="dot-rose"></i>Rose <b class="lock-tag">🔒</b></span></label>
+          <label class="swatch" data-premium><input type="radio" name="foil" value="emerald"><span><i class="dot-emerald"></i>Emerald <b class="lock-tag">🔒</b></span></label></div></fieldset>
+        <fieldset><legend>Engraving style</legend><div class="swatches">
+          <label class="swatch"><input type="radio" name="fontStyle" value="clean" checked><span>Clean <b class="free-tag">Free</b></span></label>
+          <label class="swatch" data-premium><input type="radio" name="fontStyle" value="script"><span>Script <b class="lock-tag">🔒</b></span></label>
+          <label class="swatch" data-premium><input type="radio" name="fontStyle" value="serif"><span>Serif <b class="lock-tag">🔒</b></span></label></div></fieldset>
+        <fieldset><legend>Preview theme</legend><div class="swatches">
+          <label class="swatch"><input type="radio" name="theme" value="studio" checked><span>Studio <b class="free-tag">Free</b></span></label>
+          <label class="swatch" data-premium><input type="radio" name="theme" value="midnight"><span>Midnight <b class="lock-tag">🔒</b></span></label>
+          <label class="swatch" data-premium><input type="radio" name="theme" value="sunset"><span>Sunset <b class="lock-tag">🔒</b></span></label></div></fieldset>
+        <label class="swatch" data-premium><input type="checkbox" id="shineToggle"><span>Shine effect <b class="lock-tag">🔒</b></span></label>
+      </section>
+
+      <section class="panel result" id="resultPanel" aria-live="polite">
+        <h2>Order confirmed</h2>
+        <dl id="resultDetails"></dl>
+      </section>
+    </div>
+  </div>
+
+  <section class="panel band" id="videoSection">
+    <h2>Watch: make it yours</h2>
+    <div class="video-frame"><video id="adVideo" controls preload="metadata" playsinline poster="media/ad-poster.jpg"><source src="media/ad.mp4" type="video/mp4">Your browser does not support the video tag.</video></div>
+  </section>
+
+  <section class="panel band plan-card" id="premiumSection">
+    <svg class="plan-svg" id="planSvg" viewBox="0 0 120 120" role="img" aria-label="Premium crown, click to sparkle" tabindex="0">
+      <path class="crown" d="M14 88 L22 38 L48 62 L60 28 L72 62 L98 38 L106 88 Z"/><rect class="crown-base" x="14" y="90" width="92" height="12" rx="4"/>
+      <circle class="gem" cx="60" cy="74" r="7"/></svg>
+    <div class="plan-body">
+      <h2>Tern Premium <span class="plan-chip" id="planChip">Free plan</span></h2>
+      <p class="price"><span id="planPrice">$9.99</span> <span class="hint">one-time upgrade</span></p>
+      <ul class="plan-list"><li>Gold, rose &amp; emerald engraving foils</li><li>Script &amp; serif engraving styles</li><li>Midnight &amp; sunset preview themes</li><li>Animated shine effect</li></ul>
+      <div class="button-row"><button type="button" class="btn btn-primary" id="upgradeButton">Upgrade to Premium</button><button type="button" class="btn btn-ghost" id="resetPremiumButton">Reset premium (demo)</button></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Free shipping over $50</span>
+    <span>30-day returns</span>
+    <span>2-year warranty</span>
+  </div>
+</footer>
+
+<dialog class="pay-dialog" id="payDialog" aria-labelledby="payTitle">
+  <div id="payFormView">
+    <h2 id="payTitle">Upgrade to Premium – $9.99</h2>
+    <p class="hint">Demo only: payment is simulated. Never enter real card details.</p>
+    <form id="payForm" novalidate>
+      <div class="field" id="cardNameField"><label class="field-label" for="cardName">Cardholder name</label><input class="input" id="cardName" type="text" autocomplete="off"><div class="field-meta"><span class="error-text" id="cardNameError" role="alert"></span></div></div>
+      <div class="field" id="cardNumberField"><label class="field-label" for="cardNumber">Card number</label><input class="input" id="cardNumber" type="tel" inputmode="numeric" placeholder="1234 5678 9012 3456" autocomplete="off"><div class="field-meta"><span class="error-text" id="cardNumberError" role="alert"></span></div></div>
+      <div class="pay-row">
+        <div class="field" id="cardExpiryField"><label class="field-label" for="cardExpiry">Expiry (MM/YY)</label><input class="input" id="cardExpiry" type="tel" placeholder="08/29" autocomplete="off"><div class="field-meta"><span class="error-text" id="cardExpiryError" role="alert"></span></div></div>
+        <div class="field" id="cardCvvField"><label class="field-label" for="cardCvv">CVV</label><input class="input" id="cardCvv" type="tel" maxlength="4" placeholder="123" autocomplete="off"><div class="field-meta"><span class="error-text" id="cardCvvError" role="alert"></span></div></div>
+      </div>
+      <div class="button-row"><button type="submit" class="btn btn-primary">Pay $9.99</button><button type="button" class="btn btn-ghost" id="payCancel">Cancel</button></div>
+    </form>
+  </div>
+  <div class="pay-state" id="payBusy" hidden><div class="spinner"></div><strong>Processing payment…</strong></div>
+  <div class="pay-state" id="paySuccess" hidden><div id="lottieSuccess" class="lottie-box"></div><h2>Payment successful!</h2><p>Premium is active. All premium options are unlocked.</p><button type="button" class="btn btn-primary" id="payDone">Start customizing</button></div>
+</dialog>
+
+<div class="toast-region" id="toastRegion" aria-live="polite"></div>
+<script src="lottie.min.js"></script>
+<script src="success-lottie.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
